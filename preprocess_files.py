@@ -1,5 +1,5 @@
-'''Filters vessels based on area.
-   Then calculates vessel type ID based on
+'''Filters vessels based on area.\n
+   Then calculates vessel type ID based on\n
    marker thresholds. Input and output are .csv.'''
 
 import os
@@ -35,8 +35,8 @@ def read_file(file_path):
         raise FileNotFoundError
 
 def output_dataframe(in_dir, file_path, df):
-    '''Writes a pandas dataframe to a .csv file in 'output/' dir. New file
-       name is original/input file name plus suffix _trimmed. Does not 
+    '''Writes a pandas dataframe to a .csv file in 'output/' dir. New file\n
+       name is original/input file name plus suffix _trimmed. Does not \n
        overwrite the original/input file.'''
     file_tup = extract_file_tup(file_path)
     file_ext = file_tup[1]
@@ -47,14 +47,14 @@ def output_dataframe(in_dir, file_path, df):
         raise FileExtError    
 
 def make_output_dir(in_dir):
-    '''Checks if output directory exists. If not, makes the directory.
+    '''Checks if output directory exists. If not, makes the directory.\n
        The base directory name is 'output/in_dir/'.'''
     outfile_path = os.path.join('output/', in_dir)
     if os.path.exists(outfile_path) == False:
         os.makedirs(outfile_path)
 
 def do_trim(df):
-    '''Removes items from the dataframe based on given criteria.
+    '''Removes items from the dataframe based on given criteria.\n
        Returns a copy of the original dataframe (with items removed).'''
     area_threshold = 600
     df_t = df.T
@@ -68,8 +68,8 @@ def do_trim(df):
     return df_t
 
 def calc_vessel_type(df):
-    '''Calculates vessel ID based on T/F for marker positivity. Marker 
-       positivity determined based on pre-set thresholds. Adds columns
+    '''Calculates vessel ID based on T/F for marker positivity. Marker \n
+       positivity determined based on pre-set thresholds. Adds columns \n
        to dataframe and returns.'''
     d240_threshold = 0.1                # if T, Lymphatic; if F, Blood
     lyve1_threshold = 0.7               # Lymphatic: if T, 2; if F, 1
