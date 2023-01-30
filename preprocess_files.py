@@ -92,8 +92,8 @@ def calc_vessel_type(df):
     df.loc[df['Vessel Type'] == 'Lymphatic', 'CD34+/-'] = 0
     df['Vessel ID'] = df.loc[:, 'LYVE1+/-':'CD34+/-'].sum(1)
     df['AQP1'] = df['Int_AQP1'].map(lambda x:
-                                       'True' if x > aqp1_threshold
-                                       else 'False')
+                                    'True' if x > aqp1_threshold
+                                    else 'False')
     df.loc[df['Vessel Type'] == 'Lymphatic', 'AQP1'] = 0
     return df
 
