@@ -65,7 +65,7 @@ def do_trim(df):
             #print("pop " + str(col))
             df_t.pop(col)
             col = col-1
-    return df_t
+    return df_t.T
 
 def calc_vessel_type(df):
     '''Calculates vessel ID based on T/F for marker positivity. Marker \n
@@ -101,8 +101,7 @@ in_dir = dir_input()
 for in_file in os.listdir(in_dir):
     in_file_path = in_dir + in_file
     df = read_file(in_file_path)
-    df_t_trimmed = do_trim(df)
-    df_trimmed = df_t_trimmed.T
+    df_trimmed = do_trim(df)
     df_trimmed_calc = calc_vessel_type(df_trimmed)
     make_output_dir(in_dir)
     output_dataframe(in_dir, in_file, df_trimmed_calc)
