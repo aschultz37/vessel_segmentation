@@ -71,11 +71,11 @@ def calc_vessel_type(df):
     '''Calculates vessel ID based on T/F for marker positivity. Marker \n
        positivity determined based on pre-set thresholds. Adds columns \n
        to dataframe and returns.'''
-    d240_threshold = 0.1                # if T, Lymphatic; if F, Blood
-    lyve1_threshold = 0.7               # Lymphatic: if T, 2; if F, 1
-    asma_threshold = 0.45               # Blood: if T, add 1; if F, add 2
-    cd34_threshold = 2                  # Blood: if T, add 3; if F, add 2
-    aqp1_threshold = 0.5                # Blood: T/F
+    d240_threshold = 0.1                # if >, Lymphatic; if <, Blood
+    lyve1_threshold = 0.7               # Lymphatic: if >, 2; if <, 1
+    asma_threshold = 0.45               # Blood: if >, add 1; if <, add 2
+    cd34_threshold = 2                  # Blood: if >, add 3; if <, add 2
+    aqp1_threshold = 0.5                # Blood: if >, 'True'; if <, 'False'
     df['Vessel Type'] = df['Int_D240'].map(lambda x: 
                                            'Lymphatic' if x > d240_threshold else 'Blood')
     df['LYVE1+/-'] = df['Int_LYVE1'].map(lambda x:
