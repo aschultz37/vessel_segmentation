@@ -19,6 +19,8 @@ def dir_input():
     '''Returns the path to a directory.'''
     print('Enter the directory path:')
     dir_path = input()
+    if(dir_path[-1] != '/'):
+        dir_path = dir_path + '/'
     return dir_path
 
 def read_file(file_path):
@@ -32,17 +34,24 @@ def read_file(file_path):
     except FileNotFoundError:
         raise FileNotFoundError
 
-def output_dataframe(file_path, df):
-    '''Writes a pandas dataframe to a .csv file. New file name is
-       original/input file name plus suffix _trimmed. Does not overwrite
-       the original/input file.'''
+def output_dataframe(in_dir, file_path, df):
+    '''Writes a pandas dataframe to a .csv file in 'output/' dir. New file
+       name is original/input file name plus suffix _trimmed. Does not 
+       overwrite the original/input file.'''
     file_tup = extract_file_tup(file_path)
     file_ext = file_tup[1]
-    outfile_path = file_tup[0] + '_trimmed' + file_ext
+    outfile_path = 'output/' + in_dir + file_tup[0] + '_trimmed' + file_ext
     if file_ext == '.csv':
         df.to_csv(outfile_path, header=True, index=False)
     else:
         raise FileExtError    
+
+def make_output_dir(in_dir):
+    '''Checks if output directory exists. If not, makes the directory.
+       The base directory name is 'output/in_dir/'.'''
+    outfile_path = os.path.join('output/', in_dir)
+    if os.path.exists(outfile_path) == False:
+        os.makedirs(outfile_path)
 
 def do_trim(df):
     '''Removes items from the dataframe based on given criteria.
@@ -59,8 +68,10 @@ def do_trim(df):
     return df_t
 
 in_dir = dir_input()
-for in_file in in_dir:
-    df = read_file(in_file)
+for in_file in os.listdir(in_dir):
+    in_file_path = in_dir + in_file
+    df = read_file(in_file_path)
     df_t_trimmed = do_trim(df)
     df_trimmed = df_t_trimmed.T
-    output_dataframe(in_file, df_trimmed)
+    make_output_dir(in_dir)
+    output_dataframe(in_dir, in_file, df_trimmed)
