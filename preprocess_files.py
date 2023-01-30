@@ -67,11 +67,42 @@ def do_trim(df):
             col = col-1
     return df_t
 
+def calc_vessel_type(df):
+    '''Calculates vessel ID based on T/F for marker positivity. Marker 
+       positivity determined based on pre-set thresholds. Adds columns
+       to dataframe and returns.'''
+    d240_threshold = 0.1                # if T, Lymphatic; if F, Blood
+    lyve1_threshold = 0.7               # Lymphatic: if T, 2; if F, 1
+    asma_threshold = 0.45               # Blood: if T, add 1; if F, add 2
+    cd34_threshold = 2                  # Blood: if T, add 3; if F, add 2
+    aqp1_threshold = 0.5                # Blood: T/F
+    df['Vessel Type'] = df['Int_D240'].map(lambda x: 
+                                           'Lymphatic' if x > d240_threshold else 'Blood')
+    df['LYVE1+/-'] = df['Int_LYVE1'].map(lambda x:
+                                         2 if x > lyve1_threshold
+                                         else 1)
+    df.loc[df['Vessel Type'] == 'Blood', 'LYVE1+/-'] = 0
+    df['aSMA+/-'] = df['Int_aSMA'].map(lambda x:
+                                       1 if x > asma_threshold
+                                       else 2)
+    df.loc[df['Vessel Type'] == 'Lymphatic', 'aSMA+/-'] = 0
+    df['CD34+/-'] = df['Int_CD34'].map(lambda x:
+                                       3 if x > cd34_threshold
+                                       else 2)
+    df.loc[df['Vessel Type'] == 'Lymphatic', 'CD34+/-'] = 0
+    df['Vessel ID'] = df.loc[:, 'LYVE1+/-':'CD34+/-'].sum(1)
+    df['AQP1'] = df['Int_AQP1'].map(lambda x:
+                                       'True' if x > aqp1_threshold
+                                       else 'False')
+    df.loc[df['Vessel Type'] == 'Lymphatic', 'AQP1'] = 0
+    return df
+
 in_dir = dir_input()
 for in_file in os.listdir(in_dir):
     in_file_path = in_dir + in_file
     df = read_file(in_file_path)
     df_t_trimmed = do_trim(df)
     df_trimmed = df_t_trimmed.T
+    df_trimmed_calc = calc_vessel_type(df_trimmed)
     make_output_dir(in_dir)
-    output_dataframe(in_dir, in_file, df_trimmed)
+    output_dataframe(in_dir, in_file, df_trimmed_calc)
