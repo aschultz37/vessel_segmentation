@@ -60,9 +60,9 @@ def do_trim(df):
     df_t = df.T
     for col in df_t.columns:
         vessel_area = df_t[col][0]
-        print(vessel_area)
+        #print(vessel_area)
         if int(vessel_area) < area_threshold:
-            print("pop " + str(col))
+            #print("pop " + str(col))
             df_t.pop(col)
             col = col-1
     return df_t
