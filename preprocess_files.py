@@ -77,7 +77,8 @@ def calc_vessel_type(df):
     cd34_threshold = 2                  # Blood: if >, add 3; if <, add 2
     aqp1_threshold = 0.5                # Blood: if >, 'True'; if <, 'False'
     df['Vessel Type'] = df['Int_D240'].map(lambda x: 
-                                           'Lymphatic' if x > d240_threshold else 'Blood')
+                                           'Lymphatic' if x > d240_threshold
+                                           else 'Blood')
     df['LYVE1+/-'] = df['Int_LYVE1'].map(lambda x:
                                          2 if x > lyve1_threshold
                                          else 1)
