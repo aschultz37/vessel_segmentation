@@ -2,6 +2,9 @@
    Then calculates vessel type ID based on\n
    marker thresholds. Input and output are .csv.'''
 
+# Written by: Austin Schultz (aschultz37)
+# Updated:    02/13/2022
+
 import os
 import numpy as np
 import pandas as pd
