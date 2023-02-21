@@ -63,11 +63,32 @@ def make_output_dir(in_dir):
     if os.path.exists(outfile_path) == False:
         os.makedirs(outfile_path)
 
-def num_by_location(df):
+def extract_sample_id(filename):
+    '''Extracts the sample ID from file name.'''
+    # Remove the "Feat_ROI_" and "_Final_trimmed"
+    sample_num = filename[9:-14]
+    return sample_num
+
+
+def num_by_location(df, in_file):
     '''For an ROI, determines the number of each vessel type by location.\n
        Returns a dataframe listing counts of every vessel type for IT/PT.'''
     # Create new df listing: ROI name, # Type 1 (IT), ..., # Type 1 (PT), ...
-    pass
+    in_filename = extract_file_tup(in_file)[0]
+    sample_num = extract_sample_id(in_filename)
+    data_template = {'ROI': sample_num, '# Type 1 IT': 0, '# Type 2 IT': 0, 
+                     '# Type 3 IT': 0, '# Type 4 IT': 0, '# Type 5 IT': 0,
+                     '# Type 1 PT': 0, '# Type 2 PT': 0, '# Type 3 PT': 0, 
+                     '# Type 4 PT': 0, '# Type 5 PT': 0}
+    df_num = pd.DataFrame(data=data_template, index=[0])
+    # Loop through df and increment appropriate col for each vessel
+    df_t = df.T
+    for col in df_t:
+        vessel_type = str(df_t[col]['Vessel ID'])
+        vessel_loc = df_t[col]['Vessel_Location']
+        inc_string = '# Type ' + vessel_type + ' ' + vessel_loc[0].upper() + 'T'
+        df_num.loc[:,(inc_string)] += 1
+    return df_num
 
 def density_by_location(df, in_area):
     '''Using IT/PT areas from slides, calculate density of each vessel type\n
@@ -80,7 +101,12 @@ def density_by_location(df, in_area):
 def merge_roi(all_roi):
     '''Merges the calculations for all the ROI into one dataframe for\n
        easier output.'''
-    pass
+    if len(all_roi) == 0:
+        print("Error: No ROI found.")
+        return
+    df_merged = pd.concat(all_roi, ignore_index=True)
+    return df_merged
+
 
 # Main program
 in_dir = dir_input()
@@ -90,10 +116,13 @@ all_roi = list()
 for in_file in os.listdir(in_dir):
     in_file_path = in_dir + in_file
     df = read_file(in_file_path)
-    df_num = num_by_location(df)
-    df_density = density_by_location(df_num, in_area)
-    all_roi.append(df_density)
-# output the merged dataframe    
+    df_num = num_by_location(df, in_file)
+    all_roi.append(df_num)
+# merge all ROI into one dataframe
 df_merged = merge_roi(all_roi)
-make_output_dir(in_dir)
-output_dataframe('vessel_density.csv', df_merged)
+print(df_merged)
+# # calculate density for each ROI
+# df_density = density_by_location(df_merged, in_area)
+# # output the dataframe    
+# make_output_dir(in_dir)
+# output_dataframe('vessel_density.csv', df_density)
