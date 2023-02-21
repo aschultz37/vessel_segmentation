@@ -33,7 +33,7 @@ def read_file(file_path):
         if file_ext == '.csv':
             return pd.read_csv(file_path)
         elif file_ext == '.xlsx':
-            return pd.read_excel(file_path)
+            return pd.read_excel(file_path, index_col=0)
         else:
             raise FileExtError
     except FileNotFoundError:
@@ -45,12 +45,13 @@ def areafile_input():
     areafile_path = input()
     return areafile_path
 
-def output_dataframe(file_path, df):
-    '''Writes a pandas dataframe to a .csv file in 'output/' dir. Does not \n
+def output_dataframe(in_dir, file_path, df):
+    '''Writes a pandas dataframe to a .csv file in 'output/' dir. New file\n
+       name is original/input file name plus suffix _trimmed. Does not \n
        overwrite the original/input file.'''
     file_tup = extract_file_tup(file_path)
     file_ext = file_tup[1]
-    outfile_path = 'output/' + file_path
+    outfile_path = 'output/' + in_dir + file_tup[0] + file_ext
     if file_ext == '.csv':
         df.to_csv(outfile_path, header=True, index=False)
     else:
@@ -90,13 +91,39 @@ def num_by_location(df, in_file):
         df_num.loc[:,(inc_string)] += 1
     return df_num
 
-def density_by_location(df, in_area):
+def find_it_area(sample_name, in_area):
+    '''Finds the IT area for a sample and returns it.'''
+    it_area = in_area.at[sample_name, 'IT Area']
+    return it_area
+
+def find_pt_area(sample_name, in_area):
+    '''Finds the PT area for a sample and returns it.'''
+    pt_area = in_area.at[sample_name, 'PT Area']
+    return pt_area
+
+def populate_areas(df, in_area):
+    '''Creates columns that contain IT and PT area for each sample.'''
+    df['IT Area'] = df['ROI'].map(lambda x: find_it_area(x, in_area))
+    df['PT Area'] = df['ROI'].map(lambda x: find_pt_area(x, in_area))
+    return df
+
+def density_by_location(df):
     '''Using IT/PT areas from slides, calculate density of each vessel type\n
        for IT/PT. Returns a dataframe listing density of each vessel type\n
        for IT/PT.'''
     # Formula: (no. of vessels IT) / (total IT area) and same for PT
     # Append to df: Density Type 1 (IT), ..., Density Type 1 (PT), ...
-    pass
+    df['Rho Type 1 IT'] = df['# Type 1 IT'] / df['IT Area']
+    df['Rho Type 2 IT'] = df['# Type 2 IT'] / df['IT Area']
+    df['Rho Type 3 IT'] = df['# Type 3 IT'] / df['IT Area']
+    df['Rho Type 4 IT'] = df['# Type 4 IT'] / df['IT Area']
+    df['Rho Type 5 IT'] = df['# Type 5 IT'] / df['IT Area']
+    df['Rho Type 1 PT'] = df['# Type 1 PT'] / df['PT Area']
+    df['Rho Type 2 PT'] = df['# Type 2 PT'] / df['PT Area']
+    df['Rho Type 3 PT'] = df['# Type 3 PT'] / df['PT Area']
+    df['Rho Type 4 PT'] = df['# Type 4 PT'] / df['PT Area']
+    df['Rho Type 5 PT'] = df['# Type 5 PT'] / df['PT Area']
+    return df
 
 def merge_roi(all_roi):
     '''Merges the calculations for all the ROI into one dataframe for\n
@@ -120,9 +147,9 @@ for in_file in os.listdir(in_dir):
     all_roi.append(df_num)
 # merge all ROI into one dataframe
 df_merged = merge_roi(all_roi)
-print(df_merged)
-# # calculate density for each ROI
-# df_density = density_by_location(df_merged, in_area)
-# # output the dataframe    
-# make_output_dir(in_dir)
-# output_dataframe('vessel_density.csv', df_density)
+# calculate density for each ROI
+df_areas = populate_areas(df_merged, in_area)
+df_density = density_by_location(df_areas)
+# output the dataframe    
+make_output_dir(in_dir)
+output_dataframe(in_dir, 'vessel_density.csv', df_density)
