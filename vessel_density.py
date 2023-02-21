@@ -2,6 +2,9 @@
    First calculates raw number of each vessel type\n
    by location IT or PT.'''
 
+# Written by: Austin Schultz (aschultz37)
+# Updated:    02/21/2022
+
 import os
 import numpy as np
 import pandas as pd
@@ -42,13 +45,12 @@ def areafile_input():
     areafile_path = input()
     return areafile_path
 
-def output_dataframe(in_dir, file_path, df):
-    '''Writes a pandas dataframe to a .csv file in 'output/' dir. New file\n
-       name is original/input file name plus suffix _trimmed. Does not \n
+def output_dataframe(file_path, df):
+    '''Writes a pandas dataframe to a .csv file in 'output/' dir. Does not \n
        overwrite the original/input file.'''
     file_tup = extract_file_tup(file_path)
     file_ext = file_tup[1]
-    outfile_path = 'output/' + in_dir + file_tup[0] + '_trimmed' + file_ext
+    outfile_path = 'output/' + file_path
     if file_ext == '.csv':
         df.to_csv(outfile_path, header=True, index=False)
     else:
@@ -94,4 +96,4 @@ for in_file in os.listdir(in_dir):
 # output the merged dataframe    
 df_merged = merge_roi(all_roi)
 make_output_dir(in_dir)
-output_dataframe(in_dir, in_file, df_merged)
+output_dataframe('vessel_density.csv', df_merged)
