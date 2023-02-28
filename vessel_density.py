@@ -136,6 +136,10 @@ def merge_roi(all_roi):
     df_merged = pd.concat(all_roi, ignore_index=True)
     return df_merged
 
+def merge_patients(df):
+    '''Merges all ROI into one entry per patient by adding columns.'''
+    # currently just returns the df for testing purposes
+    return df
 
 # Main program
 in_dir = dir_input()
@@ -148,10 +152,13 @@ for in_file in os.listdir(in_dir):
     df_num = num_by_location(df, in_file)
     all_roi.append(df_num)
 # merge all ROI into one dataframe
-df_merged = merge_roi(all_roi)
-# calculate density for each ROI
-df_areas = populate_areas(df_merged, in_area)
-df_density = density_by_location(df_areas)
+df_merged_roi = merge_roi(all_roi)
+# find the areas for each ROI
+df_areas = populate_areas(df_merged_roi, in_area)
+# merge all entries by patient
+df_merged_pt = merge_patients(df_areas)
+# calculate vessel densities for each patient
+df_density = density_by_location(df_merged_pt)
 # output the dataframe    
 make_output_dir(in_dir)
 output_dataframe(in_dir, 'vessel_density.csv', df_density)
