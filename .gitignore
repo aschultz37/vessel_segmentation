@@ -1,7 +1,8 @@
+Set_1*/
 Set_2*/
 Set_3*/
 output/
-amanda_edits/
+tmp/
 
 *.csv
 *.xlsx
