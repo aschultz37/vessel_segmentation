@@ -65,10 +65,11 @@ def make_output_dir(in_dir):
         os.makedirs(outfile_path)
 
 def extract_sample_id(filename):
-    '''Extracts the sample ID from file name.'''
-    # Remove the "Feat_ROI_" and "_Final_trimmed"
-    sample_num = filename[9:-14]
-    return sample_num
+    '''Extracts the sample ID and ROI from file name. Returns as tuple.\n
+       Expects file name in format ##-###_[<ROI>].csv'''
+    sample_num = filename[0:6]
+    roi = filename[7:]
+    return (sample_num, roi)
 
 
 def num_by_location(df, in_file):
@@ -77,10 +78,11 @@ def num_by_location(df, in_file):
     # Create new df listing: ROI name, # Type 1 (IT), ..., # Type 1 (PT), ...
     in_filename = extract_file_tup(in_file)[0]
     sample_num = extract_sample_id(in_filename)
-    data_template = {'ROI': sample_num, '# Type 1 IT': 0, '# Type 2 IT': 0, 
+    data_template = {'Sample ID': sample_num[0] + '_' + sample_num[1],
+                     '# Type 1 IT': 0, '# Type 2 IT': 0, 
                      '# Type 3 IT': 0, '# Type 4 IT': 0, '# Type 5 IT': 0,
-                     '# Type 1 PT': 0, '# Type 2 PT': 0, '# Type 3 PT': 0, 
-                     '# Type 4 PT': 0, '# Type 5 PT': 0}
+                     '# Type 1 PT': 0, '# Type 2 PT': 0, 
+                     '# Type 3 PT': 0, '# Type 4 PT': 0, '# Type 5 PT': 0}
     df_num = pd.DataFrame(data=data_template, index=[0])
     # Loop through df and increment appropriate col for each vessel
     df_t = df.T
@@ -103,8 +105,8 @@ def find_pt_area(sample_name, in_area):
 
 def populate_areas(df, in_area):
     '''Creates columns that contain IT and PT area for each sample.'''
-    df['IT Area'] = df['ROI'].map(lambda x: find_it_area(x, in_area))
-    df['PT Area'] = df['ROI'].map(lambda x: find_pt_area(x, in_area))
+    df['IT Area'] = df['Sample ID'].map(lambda x: find_it_area(x, in_area))
+    df['PT Area'] = df['Sample ID'].map(lambda x: find_pt_area(x, in_area))
     return df
 
 def density_by_location(df):
