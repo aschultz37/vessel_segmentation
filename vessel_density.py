@@ -78,7 +78,8 @@ def num_by_location(df, in_file):
     # Create new df listing: ROI name, # Type 1 (IT), ..., # Type 1 (PT), ...
     in_filename = extract_file_tup(in_file)[0]
     sample_num = extract_sample_id(in_filename)
-    data_template = {'Sample ID': sample_num[0] + '_' + sample_num[1],
+    data_template = {'Pt Number': sample_num[0],
+                     'Sample ID': sample_num[0] + '_' + sample_num[1],
                      '# Type 1 IT': 0, '# Type 2 IT': 0, 
                      '# Type 3 IT': 0, '# Type 4 IT': 0, '# Type 5 IT': 0,
                      '# Type 1 PT': 0, '# Type 2 PT': 0, 
