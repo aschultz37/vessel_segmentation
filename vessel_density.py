@@ -53,7 +53,7 @@ def output_dataframe(in_dir, file_path, df):
     file_ext = file_tup[1]
     outfile_path = 'output/' + in_dir + file_tup[0] + file_ext
     if file_ext == '.csv':
-        df.to_csv(outfile_path, header=True, index=False)
+        df.to_csv(outfile_path, header=True, index=True)
     else:
         raise FileExtError    
 
@@ -145,8 +145,8 @@ def merge_roi(all_roi):
 
 def merge_patients(df):
     '''Merges all ROI into one entry per patient by adding columns.'''
-    # currently just returns the df for testing purposes
-    return df
+    df_merged_pt = df.groupby(by='Pt Number').sum(numeric_only=False)
+    return df_merged_pt
 
 # Main program
 in_dir = dir_input()
