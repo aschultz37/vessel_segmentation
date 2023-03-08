@@ -96,12 +96,18 @@ def num_by_location(df, in_file):
 
 def find_it_area(sample_name, in_area):
     '''Finds the IT area for a sample and returns it.'''
-    it_area = in_area.at[sample_name, 'IT Area']
+    try:
+        it_area = in_area.at[sample_name, 'IT Area']
+    except Exception:
+        it_area = -128 # abs(-128) is >> other areas, will be obviously wrong
     return it_area
 
 def find_pt_area(sample_name, in_area):
     '''Finds the PT area for a sample and returns it.'''
-    pt_area = in_area.at[sample_name, 'PT Area']
+    try:
+        pt_area = in_area.at[sample_name, 'PT Area']
+    except Exception:
+        pt_area = -128 # abs(-128) is >> other areas, will be obviously wrong
     return pt_area
 
 def populate_areas(df, in_area):
