@@ -123,11 +123,11 @@ def density_by_location(df):
     # Formula: (no. of vessels IT) / (total IT area) and same for PT
     # Append to df: Density Type 1 (IT), ..., Density Type 1 (PT), ...
     num_vessel_types = 5
-    for i in list(range(1, num_vessel_types+1, 1)):
+    for i in range(1, num_vessel_types+1, 1):
         idx = str(i)
         df['Rho Type ' + idx + ' IT'] = (df['# Type ' + idx + ' IT'] / 
                                          df['IT Area'])
-    for i in list(range(1, num_vessel_types+1, 1)):
+    for i in range(1, num_vessel_types+1, 1):
         idx = str(i)
         df['Rho Type ' + idx + ' PT'] = (df['# Type ' + idx + ' PT'] / 
                                          df['PT Area'])
