@@ -122,16 +122,15 @@ def density_by_location(df):
        for IT/PT.'''
     # Formula: (no. of vessels IT) / (total IT area) and same for PT
     # Append to df: Density Type 1 (IT), ..., Density Type 1 (PT), ...
-    df['Rho Type 1 IT'] = df['# Type 1 IT'] / df['IT Area']
-    df['Rho Type 2 IT'] = df['# Type 2 IT'] / df['IT Area']
-    df['Rho Type 3 IT'] = df['# Type 3 IT'] / df['IT Area']
-    df['Rho Type 4 IT'] = df['# Type 4 IT'] / df['IT Area']
-    df['Rho Type 5 IT'] = df['# Type 5 IT'] / df['IT Area']
-    df['Rho Type 1 PT'] = df['# Type 1 PT'] / df['PT Area']
-    df['Rho Type 2 PT'] = df['# Type 2 PT'] / df['PT Area']
-    df['Rho Type 3 PT'] = df['# Type 3 PT'] / df['PT Area']
-    df['Rho Type 4 PT'] = df['# Type 4 PT'] / df['PT Area']
-    df['Rho Type 5 PT'] = df['# Type 5 PT'] / df['PT Area']
+    num_vessel_types = 5
+    for i in list(range(1, num_vessel_types+1, 1)):
+        idx = str(i)
+        df['Rho Type ' + idx + ' IT'] = (df['# Type ' + idx + ' IT'] / 
+                                         df['IT Area'])
+    for i in list(range(1, num_vessel_types+1, 1)):
+        idx = str(i)
+        df['Rho Type ' + idx + ' PT'] = (df['# Type ' + idx + ' PT'] / 
+                                         df['PT Area'])
     return df
 
 def merge_roi(all_roi):
