@@ -4,6 +4,7 @@ Set_3*/
 output/
 tmp/
 all/
+bkup/
 
 *.csv
 *.xlsx
