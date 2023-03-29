@@ -1,6 +1,7 @@
 '''Calculates density of vessel types IT and PT.\n
    First calculates raw number of each vessel type\n
-   by location IT or PT.'''
+   by location IT or PT.\n
+   Expects file names in format ##-###_[<ROI>].csv!'''
 
 # Written by: Austin Schultz (aschultz37)
 # Updated:    03/29/2023
